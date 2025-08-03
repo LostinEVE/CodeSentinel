@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import { AuthService } from '../services/AuthService';
 import { createError } from '../middleware/errorHandler';
@@ -6,6 +6,11 @@ import { logger } from '../utils/logger';
 
 const router = Router();
 const authService = new AuthService();
+
+// Async error handler wrapper
+const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
 
 /**
  * @route POST /api/auth/register
@@ -16,7 +21,7 @@ router.post('/register', [
   body('email').isEmail().normalizeEmail(),
   body('name').trim().isLength({ min: 2, max: 50 }),
   body('password').isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
-], async (req: Request, res: Response) => {
+], asyncHandler(async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -41,7 +46,7 @@ router.post('/register', [
   } catch (error) {
     throw error;
   }
-});
+}));
 
 /**
  * @route POST /api/auth/login
@@ -51,7 +56,7 @@ router.post('/register', [
 router.post('/login', [
   body('email').isEmail().normalizeEmail(),
   body('password').exists(),
-], async (req: Request, res: Response) => {
+], asyncHandler(async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -72,14 +77,14 @@ router.post('/login', [
   } catch (error) {
     throw error;
   }
-});
+}));
 
 /**
  * @route POST /api/auth/refresh
  * @desc Refresh JWT token
  * @access Private
  */
-router.post('/refresh', async (req: Request, res: Response) => {
+router.post('/refresh', asyncHandler(async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.body;
     
@@ -97,14 +102,14 @@ router.post('/refresh', async (req: Request, res: Response) => {
   } catch (error) {
     throw error;
   }
-});
+}));
 
 /**
  * @route POST /api/auth/verify
  * @desc Verify JWT token and return user info
  * @access Private
  */
-router.post('/verify', async (req: Request, res: Response) => {
+router.post('/verify', asyncHandler(async (req: Request, res: Response) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     
@@ -122,14 +127,14 @@ router.post('/verify', async (req: Request, res: Response) => {
   } catch (error) {
     throw error;
   }
-});
+}));
 
 /**
  * @route POST /api/auth/logout
  * @desc Logout user and invalidate token
  * @access Private
  */
-router.post('/logout', async (req: Request, res: Response) => {
+router.post('/logout', asyncHandler(async (req: Request, res: Response) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     
@@ -144,7 +149,7 @@ router.post('/logout', async (req: Request, res: Response) => {
   } catch (error) {
     throw error;
   }
-});
+}));
 
 /**
  * @route POST /api/auth/forgot-password
@@ -153,7 +158,7 @@ router.post('/logout', async (req: Request, res: Response) => {
  */
 router.post('/forgot-password', [
   body('email').isEmail().normalizeEmail(),
-], async (req: Request, res: Response) => {
+], asyncHandler(async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -177,7 +182,7 @@ router.post('/forgot-password', [
       message: 'If an account with that email exists, a password reset link has been sent.',
     });
   }
-});
+}));
 
 /**
  * @route POST /api/auth/reset-password
@@ -187,7 +192,7 @@ router.post('/forgot-password', [
 router.post('/reset-password', [
   body('token').exists(),
   body('password').isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
-], async (req: Request, res: Response) => {
+], asyncHandler(async (req: Request, res: Response) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -205,6 +210,6 @@ router.post('/reset-password', [
   } catch (error) {
     throw error;
   }
-});
+}));
 
 export { router as authRoutes };

@@ -1,9 +1,9 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 
 const router = Router();
 
 // Team management routes will be implemented here
-router.get('/', (req, res) => {
+router.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Team routes - Coming soon' });
 });
 

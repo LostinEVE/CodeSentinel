@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -62,11 +62,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(compression());
 
 // Logging
-app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
+app.use(morgan('combined', { stream: { write: (message: string) => logger.info(message.trim()) } }));
 app.use(requestLogger);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -84,7 +84,7 @@ app.use('/api/scans', scanRoutes);
 app.use('/api/webhooks', webhookRoutes);
 
 // API documentation endpoint
-app.get('/api', (req, res) => {
+app.get('/api', (req: Request, res: Response) => {
   res.json({
     name: 'CodeSentinel Enterprise API',
     version: '1.0.0',
@@ -102,7 +102,7 @@ app.get('/api', (req, res) => {
 });
 
 // 404 handler
-app.use('*', (req, res) => {
+app.use('*', (req: Request, res: Response) => {
   res.status(404).json({
     error: 'Endpoint not found',
     path: req.originalUrl,

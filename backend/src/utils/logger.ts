@@ -12,7 +12,7 @@ const logFormat = winston.format.combine(
 const consoleFormat = winston.format.combine(
   winston.format.colorize(),
   winston.format.simple(),
-  winston.format.printf(({ timestamp, level, message, stack }) => {
+  winston.format.printf(({ timestamp, level, message, stack }: any) => {
     return `${timestamp} [${level}]: ${stack || message}`;
   })
 );

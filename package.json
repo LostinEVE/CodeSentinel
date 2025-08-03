@@ -80,7 +80,13 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "dashboard": "cd dashboard && npm start"
+    "dashboard": "cd dashboard && npm start",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run compile && npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -90,6 +96,7 @@
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "@vscode/test-electron": "^2.5.2",
+    "concurrently": "^9.2.0",
     "eslint": "^8.28.0",
     "glob": "^11.0.3",
     "mocha": "^11.7.1",
