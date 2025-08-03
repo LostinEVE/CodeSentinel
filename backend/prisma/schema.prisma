@@ -1,0 +1,241 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  auth0Id   String?  @unique
+  plan      Plan     @default(FREE)
+  status    UserStatus @default(ACTIVE)
+  
+  // Subscription
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  subscriptionStatus   SubscriptionStatus?
+  currentPeriodEnd     DateTime?
+  
+  // Usage tracking
+  scansUsed       Int      @default(0)
+  quotaResetDate  DateTime @default(now())
+  lastScanAt      DateTime?
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastLoginAt DateTime?
+  
+  // Relationships
+  teamMemberships TeamMember[]
+  ownedTeams      Team[]       @relation("TeamOwner")
+  apiKeys         ApiKey[]
+  scanHistory     ScanResult[]
+  auditLogs       AuditLog[]
+  
+  @@map("users")
+}
+
+model Team {
+  id          String @id @default(uuid())
+  name        String
+  slug        String @unique
+  description String?
+  
+  // Owner relationship
+  ownerId String
+  owner   User   @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Settings
+  settings    Json?
+  maxMembers  Int    @default(10)
+  
+  // Subscription
+  plan               Plan    @default(TEAM)
+  stripeSubscriptionId String?
+  subscriptionStatus   SubscriptionStatus?
+  
+  // Usage
+  totalScans     Int @default(0)
+  monthlyQuota   Int @default(10000)
+  quotaResetDate DateTime @default(now())
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationships
+  members       TeamMember[]
+  customPolicies CustomPolicy[]
+  scanResults   ScanResult[]
+  auditLogs     AuditLog[]
+  
+  @@map("teams")
+}
+
+model TeamMember {
+  id     String   @id @default(uuid())
+  userId String
+  teamId String
+  role   TeamRole @default(MEMBER)
+  
+  // Permissions
+  permissions Json?
+  
+  // Metadata
+  joinedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, teamId])
+  @@map("team_members")
+}
+
+model ApiKey {
+  id      String @id @default(uuid())
+  name    String
+  keyHash String @unique
+  prefix  String
+  
+  // Permissions
+  scopes      Json?
+  rateLimitPerHour Int @default(1000)
+  
+  // Usage
+  lastUsedAt DateTime?
+  usageCount Int      @default(0)
+  
+  // Status
+  isActive   Boolean  @default(true)
+  expiresAt  DateTime?
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationships
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("api_keys")
+}
+
+model CustomPolicy {
+  id          String @id @default(uuid())
+  name        String
+  description String?
+  version     String @default("1.0.0")
+  
+  // Policy content
+  yamlContent String
+  rulesCount  Int    @default(0)
+  
+  // Status
+  isActive   Boolean @default(true)
+  isTemplate Boolean @default(false)
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationships
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  @@map("custom_policies")
+}
+
+model ScanResult {
+  id        String @id @default(uuid())
+  projectId String?
+  
+  // Scan metadata
+  filesScanned    Int
+  violationsFound Int
+  executionTimeMs Int
+  version         String @default("1.0.0")
+  
+  // Results
+  results      Json
+  summary      Json?
+  riskScore    Float?
+  
+  // Usage tracking
+  creditsUsed Int @default(1)
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  
+  // Relationships
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  
+  @@map("scan_results")
+}
+
+model AuditLog {
+  id     String    @id @default(uuid())
+  action String
+  entity String
+  entityId String?
+  
+  // Details
+  details Json?
+  ipAddress String?
+  userAgent String?
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  
+  // Relationships
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  
+  @@map("audit_logs")
+}
+
+// Enums
+enum Plan {
+  FREE
+  STARTER
+  TEAM
+  ENTERPRISE
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
+  UNPAID
+}
+
+enum TeamRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}

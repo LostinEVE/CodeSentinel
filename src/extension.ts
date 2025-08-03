@@ -11,22 +11,25 @@ import { EthicalRemediationEngine } from './addons/remediationEngine';
 import { TeamAwarenessEngine } from './addons/teamAwarenessEngine';
 import { GitPreCommitEnforcement } from './addons/gitPreCommitEnforcement';
 import { PatentInfringementScanner } from './addons/patentInfringementScanner';
+import { SaaSIntegration } from './saas/SaaSIntegration';
 import * as path from 'path';
 
 export class EthicsCodeActionProvider implements vscode.CodeActionProvider {
   private ethicsEngine: EthicsEngine;
   private policyLoader: PolicyLoader;
   private llmIntegration: LLMIntegration;
+  private saasIntegration: SaaSIntegration;
   public remediationEngine: EthicalRemediationEngine;
   public teamAwareness: TeamAwarenessEngine;
   public gitEnforcement: GitPreCommitEnforcement;
   public patentScanner: PatentInfringementScanner;
   private currentPolicy: EthicsPolicy | null = null;
 
-  constructor() {
+  constructor(context: vscode.ExtensionContext) {
     this.ethicsEngine = new EthicsEngine();
     this.policyLoader = new PolicyLoader();
     this.llmIntegration = new LLMIntegration();
+    this.saasIntegration = new SaaSIntegration(context);
     
     // Initialize enterprise addon modules
     this.remediationEngine = new EthicalRemediationEngine(this.llmIntegration);
@@ -39,6 +42,10 @@ export class EthicsCodeActionProvider implements vscode.CodeActionProvider {
     this.patentScanner = new PatentInfringementScanner(this.llmIntegration);
     
     this.loadDefaultPolicy();
+  }
+
+  public getSaaSIntegration(): SaaSIntegration {
+    return this.saasIntegration;
   }
 
   public getCurrentPolicy(): EthicsPolicy | null {
@@ -294,13 +301,16 @@ export class EthicsDiagnosticProvider {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log('Ethics Engine extension is now active');
+  console.log('CodeSentinel Ethics Engine extension is now active');
 
   const ethicsEngine = new EthicsEngine();
   const policyLoader = new PolicyLoader();
   const llmIntegration = new LLMIntegration();
-  const codeActionProvider = new EthicsCodeActionProvider();
+  const codeActionProvider = new EthicsCodeActionProvider(context);
   const diagnosticProvider = new EthicsDiagnosticProvider();
+
+  // Initialize SaaS integration
+  codeActionProvider.getSaaSIntegration().initialize();
 
   // Register CodeActionProvider for supported languages
   const languages = ['javascript', 'typescript', 'python'];
@@ -309,6 +319,68 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.languages.registerCodeActionsProvider(language, codeActionProvider)
     );
   });
+
+  // Register SaaS commands
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codesentinel.login', async () => {
+      await codeActionProvider.getSaaSIntegration().login();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codesentinel.register', async () => {
+      await codeActionProvider.getSaaSIntegration().register();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codesentinel.logout', async () => {
+      await codeActionProvider.getSaaSIntegration().logout();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codesentinel.accountInfo', async () => {
+      await codeActionProvider.getSaaSIntegration().showAccountInfo();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('codesentinel.cloudScan', async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        vscode.window.showErrorMessage('No active editor found');
+        return;
+      }
+
+      const saas = codeActionProvider.getSaaSIntegration();
+      if (!saas.isAuthenticated()) {
+        const action = await vscode.window.showErrorMessage(
+          'Please sign in to use cloud scanning',
+          'Sign In',
+          'Register'
+        );
+        if (action === 'Sign In') {
+          await saas.login();
+        } else if (action === 'Register') {
+          await saas.register();
+        }
+        return;
+      }
+
+      const files = [{
+        path: editor.document.fileName,
+        content: editor.document.getText()
+      }];
+
+      const result = await saas.submitScan(files);
+      if (result) {
+        vscode.window.showInformationMessage(
+          `Cloud scan completed: ${result.results.length} issues found`
+        );
+      }
+    })
+  );
 
   // Register commands
   context.subscriptions.push(
