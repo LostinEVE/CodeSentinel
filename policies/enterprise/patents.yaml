@@ -1,0 +1,64 @@
+# Enterprise Patent Protection Configuration
+# Patent infringement detection and risk assessment
+
+name: enterprise-patent-protection
+version: 1.0.0
+description: Patent infringement detection configuration for enterprise ethics engine
+enabled: true
+
+# Terms and definitions
+terms:
+  - name: uspto
+    description: "United States Patent and Trademark Office"
+  - name: epo
+    description: "European Patent Office"
+  - name: wipo
+    description: "World Intellectual Property Organization"
+  - name: patent_infringement
+    description: "Unauthorized use of patented invention"
+  - name: prior_art
+    description: "Evidence that invention was known before patent filing"
+  - name: intellectual_property
+    description: "Creations of the mind protected by law"
+
+# Patent Scanning Configuration
+patent_scanning:
+  # Database Sources
+  databases:
+    uspto:
+      enabled: true
+      api_endpoint: "https://api.uspto.gov/patents"
+      rate_limit: 100  # requests per minute
+      search_depth: comprehensive
+      
+    epo:
+      enabled: true
+      api_endpoint: "https://ops.epo.org/3.2"
+      rate_limit: 60
+      search_depth: moderate
+      
+    wipo:
+      enabled: true
+      api_endpoint: "https://www.wipo.int/branddb/en/"
+      rate_limit: 30
+      search_depth: basic
+
+  # Risk Assessment Configuration
+  risk_assessment:
+    similarity_threshold: 0.75
+    confidence_threshold: 0.85
+    review_required_threshold: 0.6
+    
+  # Mitigation Strategies
+  mitigation_strategies:
+    - prior_art_search
+    - design_around
+    - licensing_negotiation
+    - legal_review
+
+metadata:
+  author: Ethics Engine Patent Team
+  created: "2025-08-03T00:00:00Z"
+  lastModified: "2025-08-03T00:00:00Z"
+  patent_version: "2025.1"
+  next_review_date: "2025-12-31T23:59:59Z"

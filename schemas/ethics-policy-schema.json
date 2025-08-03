@@ -1,0 +1,210 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Ethics Policy Schema",
+  "description": "JSON Schema for Enterprise Ethics Engine Policy Files",
+  "type": "object",
+  "required": ["name", "version", "rules", "thresholds", "enforcement"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Policy name identifier"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the policy"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the policy"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this policy is active"
+    },
+    "rules": {
+      "type": "array",
+      "description": "Array of ethics rules to enforce",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "category", "severity", "pattern"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique identifier for the rule"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Human-readable name for the rule"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of what the rule detects"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["surveillance", "discrimination", "privacy", "misuse", "manipulation"],
+            "description": "Category of ethical violation"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "description": "Severity level of the violation"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether this rule is active"
+          },
+          "pattern": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Regular expression pattern to match violations"
+          },
+          "flags": {
+            "type": "string",
+            "default": "gi",
+            "description": "Regular expression flags"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.5,
+            "description": "Weight factor for this rule in scoring"
+          },
+          "contexts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Contexts where this rule applies"
+          },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Contexts where this rule should be ignored"
+          },
+          "customMessage": {
+            "type": "string",
+            "description": "Custom message to display when violation is detected"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommended action to fix the violation"
+          }
+        }
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "description": "Threshold values for different violation categories",
+      "required": ["surveillance", "discrimination", "privacy", "misuse", "manipulation", "overall"],
+      "properties": {
+        "surveillance": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Threshold for surveillance violations"
+        },
+        "discrimination": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Threshold for discrimination violations"
+        },
+        "privacy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Threshold for privacy violations"
+        },
+        "misuse": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Threshold for misuse violations"
+        },
+        "manipulation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Threshold for manipulation violations"
+        },
+        "overall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Overall threshold for all violations"
+        }
+      }
+    },
+    "enforcement": {
+      "type": "object",
+      "description": "Enforcement configuration",
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["warn", "error", "block"],
+          "description": "Enforcement mode for violations"
+        },
+        "autoFix": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to automatically fix violations"
+        },
+        "notifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to show notifications for violations"
+        },
+        "auditLog": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to log violations for audit purposes"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Policy metadata",
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "Author of the policy"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "lastModified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last modification timestamp"
+        },
+        "compliance": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Compliance standards this policy addresses"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags for categorization"
+        }
+      }
+    }
+  }
+}

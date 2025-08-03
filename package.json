@@ -1,0 +1,103 @@
+{
+  "name": "code-ethics-engine",
+  "displayName": "Code Ethics Engine",
+  "description": "Enterprise-grade ethical code analysis with original TrustLedger-derived algorithms",
+  "version": "1.0.0",
+  "publisher": "ethicsengine",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:python"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ethicsEngine.scanFile",
+        "title": "Scan for Ethical Violations",
+        "category": "Ethics Engine"
+      },
+      {
+        "command": "ethicsEngine.openDashboard",
+        "title": "Open Ethics Dashboard",
+        "category": "Ethics Engine"
+      },
+      {
+        "command": "ethicsEngine.reloadPolicies",
+        "title": "Reload Ethics Policies",
+        "category": "Ethics Engine"
+      },
+      {
+        "command": "ethicsEngine.analyzeWithLLM",
+        "title": "Analyze with LLM",
+        "category": "Ethics Engine"
+      }
+    ],
+    "configuration": {
+      "title": "Code Ethics Engine",
+      "properties": {
+        "ethicsEngine.enableAutoScan": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan files on save"
+        },
+        "ethicsEngine.riskThreshold": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Risk threshold for flagging violations (0-1)"
+        },
+        "ethicsEngine.llmProvider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "ag2ai",
+            "disabled"
+          ],
+          "default": "disabled",
+          "description": "LLM provider for contextual analysis"
+        },
+        "ethicsEngine.llmApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for LLM provider"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "dashboard": "cd dashboard && npm start"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^8.28.0",
+    "glob": "^11.0.3",
+    "mocha": "^11.7.1",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "axios": "^1.6.0",
+    "yaml": "^2.3.4"
+  }
+}

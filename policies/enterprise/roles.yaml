@@ -1,0 +1,66 @@
+# Enterprise Team Roles Configuration
+# Role-based violation weighting and permissions
+
+name: enterprise-team-roles
+version: 1.0.0
+description: Team role definitions and violation weighting for enterprise ethics engine
+enabled: true
+
+# Terms and definitions
+terms:
+  - name: senior_engineer
+    description: "Engineer with 5+ years experience"
+  - name: junior_engineer
+    description: "Engineer with 0-2 years experience"
+  - name: team_lead
+    description: "Engineer responsible for team coordination"
+  - name: compliance_officer
+    description: "Individual responsible for regulatory compliance"
+  - name: violation_weight
+    description: "Multiplier applied to violation severity based on role"
+
+# Team Role Definitions
+team_roles:
+  senior_engineer:
+    experience_years: 5+
+    violation_weight: 0.8  # Less weight due to experience
+    review_required: false
+    permissions:
+      can_ignore_warnings: true
+      can_modify_policies: false
+      can_approve_violations: false
+      max_risk_threshold: 0.8
+    responsibilities:
+      - code_development
+      - mentoring
+      - architecture_guidance
+    ethics_training_hours: 40
+    certification_requirements:
+      - secure_coding
+      - ethics_awareness
+    
+  junior_engineer:
+    experience_years: 0-2
+    violation_weight: 1.2  # Higher weight due to inexperience
+    review_required: true
+    permissions:
+      can_ignore_warnings: false
+      can_modify_policies: false
+      can_approve_violations: false
+      max_risk_threshold: 0.5
+    responsibilities:
+      - code_development
+      - learning
+      - following_guidelines
+    ethics_training_hours: 60
+    certification_requirements:
+      - secure_coding_basics
+      - ethics_fundamentals
+      - code_review_training
+
+metadata:
+  author: Ethics Engine Team Roles
+  created: "2025-08-03T00:00:00Z"
+  lastModified: "2025-08-03T00:00:00Z"
+  role_version: "2025.1"
+  next_review_date: "2025-12-31T23:59:59Z"
