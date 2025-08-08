@@ -1,7 +1,7 @@
 import React from 'react';
 import { Shield, Heart, Users, Globe, Github, Mail, ExternalLink } from 'lucide-react';
 
-export default function aboutPage(): React.ReactElement {
+export default function AboutPage(): React.ReactElement {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
@@ -21,9 +21,9 @@ export default function aboutPage(): React.ReactElement {
         </div>
         <p className="text-gray-600 text-lg leading-relaxed">
           CodeSentinel was born from the belief that technology should enhance humanity, not exploit it. 
-          We empower developers and organizations to build software that respects privacy, promotes fairness, 
-          and creates positive impact. Our AI-driven platform analyzes code for ethical violations, helping 
-          teams catch potential issues before they reach production.
+          As a solo developer, I'm passionate about empowering developers and organizations to build software 
+          that respects privacy, promotes fairness, and creates positive impact. This AI-driven platform 
+          analyzes code for ethical violations, helping teams catch potential issues before they reach production.
         </p>
       </div>
 
@@ -65,41 +65,31 @@ export default function aboutPage(): React.ReactElement {
         </div>
       </div>
 
-      {/* Team */}
+      {/* Developer */}
       <div className="bg-white rounded-lg shadow p-8">
         <div className="flex items-center mb-6">
           <Users className="w-8 h-8 text-blue-500 mr-3" />
-          <h2 className="text-2xl font-bold text-gray-900">Our Team</h2>
+          <h2 className="text-2xl font-bold text-gray-900">About the Developer</h2>
         </div>
         <p className="text-gray-600 text-lg leading-relaxed mb-6">
-          CodeSentinel is developed by a diverse team of engineers, ethicists, and domain experts 
-          passionate about responsible AI and software development. We believe in transparency, 
-          accountability, and building technology that serves everyone.
+          CodeSentinel is developed by a passionate solo developer committed to responsible AI and 
+          ethical software development. This project combines expertise in full-stack development, 
+          machine learning, and ethical technology principles to create tools that make a difference.
         </p>
         
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <span className="text-white text-2xl font-bold">AI</span>
-            </div>
-            <h3 className="font-semibold text-gray-900">AI Research Team</h3>
-            <p className="text-sm text-gray-600">Machine learning engineers and researchers</p>
+        <div className="max-w-md mx-auto text-center">
+          <div className="w-24 h-24 bg-gradient-to-br from-blue-500 via-purple-600 to-green-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <span className="text-white text-3xl font-bold">DEV</span>
           </div>
-          
-          <div className="text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-teal-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <span className="text-white text-2xl font-bold">ET</span>
-            </div>
-            <h3 className="font-semibold text-gray-900">Ethics Team</h3>
-            <p className="text-sm text-gray-600">Philosophers, policy experts, and ethicists</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <span className="text-white text-2xl font-bold">ENG</span>
-            </div>
-            <h3 className="font-semibold text-gray-900">Engineering Team</h3>
-            <p className="text-sm text-gray-600">Full-stack developers and DevOps specialists</p>
+          <h3 className="font-semibold text-gray-900 text-lg">Solo Developer & Creator</h3>
+          <p className="text-gray-600 mt-2">
+            Full-stack engineer passionate about ethical AI, responsible technology, 
+            and building tools that empower developers to create positive impact.
+          </p>
+          <div className="mt-4 flex justify-center space-x-4 text-sm text-gray-500">
+            <span>• TypeScript/React Expert</span>
+            <span>• AI/ML Integration</span>
+            <span>• Enterprise Architecture</span>
           </div>
         </div>
       </div>
@@ -139,17 +129,17 @@ export default function aboutPage(): React.ReactElement {
         
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Connect With Us</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Connect</h3>
             <div className="space-y-3">
               <a 
-                href="mailto:hello@codesentinel.ai" 
+                href="mailto:contact@codesentinel.dev" 
                 className="flex items-center text-gray-600 hover:text-primary transition-colors"
               >
                 <Mail className="w-5 h-5 mr-3" />
-                hello@codesentinel.ai
+                contact@codesentinel.dev
               </a>
               <a 
-                href="https://github.com/codesentinel" 
+                href="https://github.com/LostinEVE/CodeSentinel" 
                 className="flex items-center text-gray-600 hover:text-primary transition-colors"
               >
                 <Github className="w-5 h-5 mr-3" />
@@ -174,7 +164,7 @@ export default function aboutPage(): React.ReactElement {
       {/* Footer */}
       <div className="text-center py-8 border-t border-gray-200">
         <p className="text-gray-500">
-          © 2025 CodeSentinel. Built with ❤️ for ethical software development.
+          © 2025 CodeSentinel. Built with ❤️ by a solo developer passionate about ethical software.
         </p>
       </div>
     </div>

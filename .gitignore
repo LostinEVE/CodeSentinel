@@ -22,16 +22,33 @@ out/
 # TypeScript
 *.tsbuildinfo
 
-# Environment variables
+# Environment variables - CRITICAL FOR SECURITY
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+backend/.env
+backend/.env.local
+backend/.env.production
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# API Keys and Secrets - NEVER COMMIT THESE
+*.key
+*api-key*
+*secret*
+openai-api-key.txt
+stripe-keys.txt
+api-keys/
+secrets/
 
 # Logs
-logs
+logs/
 *.log
+backend/logs/
+frontend/logs/
 
 # Runtime data
 pids
