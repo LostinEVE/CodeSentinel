@@ -160,3 +160,15 @@ coverage/
 
 # Backup files
 *.orig
+
+# Sales and business materials (keep private)
+*SALES*
+*BUYER*
+*EMAIL_TEMPLATES*
+*EXECUTIVE_SUMMARY*
+*ACQUISITION*
+*OUTREACH*
+*VALUATION*
+*BUSINESS_PLAN*
+*COST_ANALYSIS*
+*LAUNCH_GUIDE*
